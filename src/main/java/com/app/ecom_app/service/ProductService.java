@@ -44,7 +44,7 @@ public class ProductService {
         productResponse.setQuantity(product.getQuantity());
         productResponse.setDescription(product.getDescription());
         productResponse.setActive(product.getActive());
-        productRepo.save(product);
+//        productRepo.save(product);// not need to re-save it just update the fields
         return productResponse;
     }
 
