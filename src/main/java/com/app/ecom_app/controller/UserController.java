@@ -1,7 +1,7 @@
 package com.app.ecom_app.controller;
 
-import com.app.ecom_app.enums.UserRole;
-import com.app.ecom_app.model.User;
+import com.app.ecom_app.dto.UserRequest;
+import com.app.ecom_app.dto.UserResponse;
 import com.app.ecom_app.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,8 +18,8 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userService.fetchAllUsers();
+    public ResponseEntity<List<UserResponse>> getAllUsers() {
+        List<UserResponse> users = userService.fetchAllUsers();
         if (users.isEmpty()) {
             return new ResponseEntity<>(users, HttpStatus.NO_CONTENT);
         }
@@ -27,8 +27,8 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable String id) {
-        User user = userService.fetchUserById(id);
+    public ResponseEntity<UserResponse> getUserById(@PathVariable String id) {
+        UserResponse user = userService.fetchUserById(id);
         if (user == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -36,15 +36,14 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<String> createUser(@RequestBody User user) {
+    public ResponseEntity<String> createUser(@RequestBody UserRequest user) {
 //        no conflicts checking as the id is auto-generated
-        if(user.getRole() == null) user.setRole(UserRole.CUSTOMER);
         userService.addUser(user);
         return ResponseEntity.ok("User created");
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateUser(@PathVariable String id,@RequestBody User user) {
+    public ResponseEntity<String> updateUser(@PathVariable String id,@RequestBody UserRequest user) {
         if(userService.fetchUserById(id) == null) return new ResponseEntity<>(HttpStatus.CONFLICT);
 
         boolean isSuccessful = userService.updateUser(id,user);

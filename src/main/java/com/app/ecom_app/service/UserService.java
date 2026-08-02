@@ -1,12 +1,17 @@
 package com.app.ecom_app.service;
 
+import com.app.ecom_app.dto.AddressDTO;
+import com.app.ecom_app.dto.UserRequest;
+import com.app.ecom_app.dto.UserResponse;
+import com.app.ecom_app.enums.UserRole;
+import com.app.ecom_app.model.Address;
 import com.app.ecom_app.model.User;
 import com.app.ecom_app.repository.UserRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -14,30 +19,68 @@ public class UserService {
 
     private final UserRepo userRepo;
 
-    public List<User> fetchAllUsers() {
-        return userRepo.findAll();
+    public List<UserResponse> fetchAllUsers() {
+        return userRepo.findAll().stream()
+                .map(this::mapToUserResponse)
+                .collect(Collectors.toList());
     }
 
-    public void addUser(User user) {
-        userRepo.save(user);
+    public void addUser(UserRequest user) {
+        User userEntity = new User();
+        userEntity.setRole(UserRole.CUSTOMER);//hardcode the role for now as default
+        updateUserFromRequest(userEntity,user);
+        userRepo.save(userEntity);
     }
 
-    public User fetchUserById(String id) {
+    public UserResponse fetchUserById(String id) {
 //        fetch the user by id, filter then findFirst orElse null
-        return userRepo.findById(id).orElse(null);
+        User user = userRepo.findById(id).orElse(null);
+        return user!=null?mapToUserResponse(user):null;
     }
 
-    public boolean updateUser(String id, User UpdatedUser){
-        User user = fetchUserById(id);
+    public boolean updateUser(String id, UserRequest UpdatedUserRequest){
+        User user = userRepo.findById(id).orElse(null);
         if(user == null) return false;
-        user.setFirstName(UpdatedUser.getFirstName());
-        user.setLastName(UpdatedUser.getLastName());
-        user.setEmail(UpdatedUser.getEmail());
-        user.setPhone(UpdatedUser.getPhone());
-        user.setPassword(UpdatedUser.getPassword());
-        user.setAddress(UpdatedUser.getAddress());
-        user.setRole(UpdatedUser.getRole());
+        updateUserFromRequest(user,UpdatedUserRequest);
         userRepo.save(user);
         return true;
+    }
+
+    private UserResponse mapToUserResponse(User user) {
+        UserResponse userResponse = new UserResponse();
+        userResponse.setId(user.getId());
+        userResponse.setFirstName(user.getFirstName());
+        userResponse.setLastName(user.getLastName());
+        userResponse.setEmail(user.getEmail());
+        userResponse.setPhone(user.getPhone());
+        userResponse.setRole(user.getRole());
+
+        if(user.getAddress() != null) {
+            AddressDTO addressDTO = new AddressDTO();
+            addressDTO.setCity(user.getAddress().getCity());
+            addressDTO.setCountry(user.getAddress().getCountry());
+            addressDTO.setStreet(user.getAddress().getStreet());
+            addressDTO.setZip(user.getAddress().getZip());
+            addressDTO.setState(user.getAddress().getState());
+            userResponse.setAddress(addressDTO);
+        }
+        return userResponse;
+    }
+
+    private void updateUserFromRequest(User user, UserRequest userRequest) {
+        user.setFirstName(userRequest.getFirstName());
+        user.setLastName(userRequest.getLastName());
+        user.setEmail(userRequest.getEmail());
+        user.setPhone(userRequest.getPhone());
+        user.setPassword(userRequest.getPassword());
+
+
+        Address address = user.getAddress() != null ? user.getAddress() : new Address();
+        address.setCity(userRequest.getAddress().getCity());
+        address.setCountry(userRequest.getAddress().getCountry());
+        address.setStreet(userRequest.getAddress().getStreet());
+        address.setZip(userRequest.getAddress().getZip());
+        address.setState(userRequest.getAddress().getState());
+        user.setAddress(address);
     }
 }
