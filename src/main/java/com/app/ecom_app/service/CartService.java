@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,6 +30,8 @@ public class CartService {
         // add the product to the cart(from the cartRepo)
         Optional<Product> productOpt = productRepo.findById(request.getProductId());
         Optional<User> userOpt = userRepo.findById(userId);
+
+        if(request.getQuantity().compareTo(BigInteger.ZERO)<=0) return false;
 
         if (!productOpt.isPresent() || !userOpt.isPresent() || !(productOpt.isPresent() && productOpt.get().getQuantity().compareTo(request.getQuantity()) > 0)) {
 //            invalid if product is null or user is null or if product qty is not greater than request qty
