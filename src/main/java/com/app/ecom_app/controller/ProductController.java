@@ -2,8 +2,8 @@ package com.app.ecom_app.controller;
 
 import com.app.ecom_app.dto.ProductRequest;
 import com.app.ecom_app.dto.ProductResponse;
-import com.app.ecom_app.model.Product;
 import com.app.ecom_app.service.ProductService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +19,7 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping
-    public ResponseEntity<ProductResponse> createProduct(@RequestBody ProductRequest product) {
+    public ResponseEntity<ProductResponse> createProduct(@Valid @RequestBody ProductRequest product) {
         return new ResponseEntity<>(productService.createProduct(product), HttpStatus.CREATED);
     }
 
@@ -34,7 +34,7 @@ public class ProductController {
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProductResponse> updateProduct(@PathVariable String id, @RequestBody ProductRequest product) {
+    public ResponseEntity<ProductResponse> updateProduct(@PathVariable String id,@Valid @RequestBody ProductRequest product) {
         if(!productService.fetchProductById(id)) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(productService.updateProduct(id,product), HttpStatus.OK);
     }

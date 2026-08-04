@@ -3,6 +3,7 @@ package com.app.ecom_app.controller;
 import com.app.ecom_app.dto.UserRequest;
 import com.app.ecom_app.dto.UserResponse;
 import com.app.ecom_app.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,14 +37,14 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<String> createUser(@RequestBody UserRequest user) {
+    public ResponseEntity<String> createUser(@Valid @RequestBody UserRequest user) {
 //        no conflicts checking as the id is auto-generated
         userService.addUser(user);
         return ResponseEntity.ok("User created");
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateUser(@PathVariable String id,@RequestBody UserRequest user) {
+    public ResponseEntity<String> updateUser(@PathVariable String id,@Valid @RequestBody UserRequest user) {
         if(userService.fetchUserById(id) == null) return new ResponseEntity<>(HttpStatus.CONFLICT);
 
         boolean isSuccessful = userService.updateUser(id,user);
