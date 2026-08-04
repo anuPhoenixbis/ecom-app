@@ -1,6 +1,7 @@
 package com.app.ecom_app.controller;
 
 import com.app.ecom_app.dto.OrderResponse;
+import com.app.ecom_app.service.CartService;
 import com.app.ecom_app.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrderController {
 
     private final OrderService orderService;
+    private final CartService cartService;
 
     @PostMapping
     public ResponseEntity<OrderResponse> createOrder(

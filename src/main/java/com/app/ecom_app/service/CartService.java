@@ -74,7 +74,7 @@ public class CartService {
         Optional<User> userOpt = userRepo.findById(userId);
 
         if(userOpt.isPresent()){
-            return cartItemRepo.findAll();
+            return cartItemRepo.findByUser(userOpt.get());
         }
         return null;
     }
