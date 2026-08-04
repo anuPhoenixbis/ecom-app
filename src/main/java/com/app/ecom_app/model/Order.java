@@ -41,6 +41,6 @@ public class Order {
 
     @PrePersist
     public void prePersist() {
-        status = OrderStatus.PENDING;
+        if(status==null) status = OrderStatus.PENDING;
     }
 }

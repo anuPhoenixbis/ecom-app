@@ -33,7 +33,7 @@ public class CartService {
 
         if(request.getQuantity().compareTo(BigInteger.ZERO)<=0) return false;
 
-        if (productOpt.isEmpty() || userOpt.isEmpty() || !(productOpt.get().getQuantity().compareTo(request.getQuantity()) > 0)) {
+        if (productOpt.isEmpty() || userOpt.isEmpty() || productOpt.get().getQuantity().compareTo(request.getQuantity()) <= 0) {
 //            invalid if product is null or user is null or if product qty is not greater than request qty
             return false;
         }
