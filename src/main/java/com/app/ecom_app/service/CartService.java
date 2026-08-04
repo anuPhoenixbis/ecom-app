@@ -33,7 +33,7 @@ public class CartService {
 
         if(request.getQuantity().compareTo(BigInteger.ZERO)<=0) return false;
 
-        if (!productOpt.isPresent() || !userOpt.isPresent() || !(productOpt.isPresent() && productOpt.get().getQuantity().compareTo(request.getQuantity()) > 0)) {
+        if (productOpt.isEmpty() || userOpt.isEmpty() || productOpt.get().getQuantity().compareTo(request.getQuantity()) <= 0) {
 //            invalid if product is null or user is null or if product qty is not greater than request qty
             return false;
         }
@@ -77,5 +77,9 @@ public class CartService {
             return cartItemRepo.findAll();
         }
         return null;
+    }
+
+    public void clearCart(String userId) {
+        userRepo.findById(userId).ifPresent(cartItemRepo::deleteByUser);
     }
 }
