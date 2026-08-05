@@ -8,6 +8,7 @@ import com.app.ecom_app.model.Address;
 import com.app.ecom_app.model.User;
 import com.app.ecom_app.repository.UserRepo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,6 +20,8 @@ public class UserService {
 
     private final UserRepo userRepo;
 
+    private final PasswordEncoder passwordEncoder;
+
     public List<UserResponse> fetchAllUsers() {
         return userRepo.findAll().stream()
                 .map(this::mapToUserResponse)
@@ -27,7 +30,6 @@ public class UserService {
 
     public void addUser(UserRequest user) {
         User userEntity = new User();
-        userEntity.setRole(UserRole.CUSTOMER);//hardcode the role for now as default
         updateUserFromRequest(userEntity,user);
         userRepo.save(userEntity);
     }
@@ -72,7 +74,7 @@ public class UserService {
         user.setLastName(userRequest.getLastName());
         user.setEmail(userRequest.getEmail());
         user.setPhone(userRequest.getPhone());
-        user.setPassword(userRequest.getPassword());
+        user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
 
 
         Address address = user.getAddress() != null ? user.getAddress() : new Address();

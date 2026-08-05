@@ -36,12 +36,7 @@ public class UserController {
         return new ResponseEntity<>(user,HttpStatus.OK);
     }
 
-    @PostMapping
-    public ResponseEntity<String> createUser(@Valid @RequestBody UserRequest user) {
-//        no conflicts checking as the id is auto-generated
-        userService.addUser(user);
-        return ResponseEntity.ok("User created");
-    }
+
 
     @PutMapping("/{id}")
     public ResponseEntity<String> updateUser(@PathVariable String id,@Valid @RequestBody UserRequest user) {
