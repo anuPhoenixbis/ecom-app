@@ -21,7 +21,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping
 @RequiredArgsConstructor
-public class PublicController {
+public class AuthController {
 
     private final UserRepo userRepo;
 
