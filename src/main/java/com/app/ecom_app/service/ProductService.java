@@ -27,7 +27,7 @@ public class ProductService {
     public Product mapProductRequestToProduct(ProductRequest productRequest) {
         Product product = new Product();
         product.setName(productRequest.getName());
-        product.setCategory(productRequest.getCategory());
+        product.setCategory(String.valueOf(productRequest.getCategory()));
         product.setImageUrl(productRequest.getImageUrl());
         product.setPrice(productRequest.getPrice());
         product.setQuantity(productRequest.getQuantity());
@@ -44,7 +44,6 @@ public class ProductService {
         productResponse.setQuantity(product.getQuantity());
         productResponse.setDescription(product.getDescription());
         productResponse.setActive(product.getActive());
-//        productRepo.save(product);// not need to re-save it just update the fields
         return productResponse;
     }
 
@@ -56,7 +55,7 @@ public class ProductService {
         if(!productRepo.findById(id).isPresent()) return null;
         Product savedProduct = productRepo.findById(id).get();
         savedProduct.setName(product.getName());
-        savedProduct.setCategory(product.getCategory());
+        savedProduct.setCategory(String.valueOf(product.getCategory()));
         savedProduct.setImageUrl(product.getImageUrl());
         savedProduct.setPrice(product.getPrice());
         savedProduct.setQuantity(product.getQuantity());

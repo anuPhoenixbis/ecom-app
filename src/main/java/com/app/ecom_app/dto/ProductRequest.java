@@ -1,5 +1,8 @@
 package com.app.ecom_app.dto;
 
+import com.app.ecom_app.enums.Category;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
@@ -35,7 +38,8 @@ public class ProductRequest {
             regexp = "^[A-Za-z &-]+$",
             message = "Category can contain only letters, spaces, '&' and '-'"
     )
-    private String category;
+    @Enumerated(EnumType.STRING)
+    private Category category;
     @NotBlank(message = "Image URL is required")
     @Pattern(
             regexp = "^(https?://).+",
