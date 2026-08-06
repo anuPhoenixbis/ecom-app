@@ -25,7 +25,7 @@ public class Product {
     @Column(unique = true, nullable = false, length = 100)
     private String name;
 
-    @Column(length = 100, nullable = false)
+    @Column(length = 1000, nullable = false)
     private String description;
 
     @Column(precision = 100, scale = 2, nullable = false)

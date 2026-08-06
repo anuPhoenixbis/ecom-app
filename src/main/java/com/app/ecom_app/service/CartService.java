@@ -82,4 +82,11 @@ public class CartService {
     public void clearCart(String userId) {
         userRepo.findById(userId).ifPresent(cartItemRepo::deleteByUser);
     }
+
+    public void updateProductQuantity(String userId, String productId, BigInteger quantity) {
+        CartItemRequest cartItemRequest = new CartItemRequest();
+        cartItemRequest.setQuantity(quantity);
+        cartItemRequest.setProductId(productId);
+        addToCart(userId, cartItemRequest);
+    }
 }
