@@ -1,5 +1,6 @@
 package com.app.ecom_app.config;
 
+import com.app.ecom_app.enums.UserRole;
 import com.app.ecom_app.filter.JwtFilter;
 import com.app.ecom_app.service.UserDetailsServiceImplementation;
 import com.app.ecom_app.service.UserService;
@@ -40,10 +41,10 @@ public class SpringSecurity {
                         ).permitAll()
                 .requestMatchers(
                         HttpMethod.GET,
-                        "/products/**",
-                        "/categories/**"
+                        "/api/products/**",
+                        "/api/categories/**"
                 ).permitAll()
-                .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/admin/**").hasRole(UserRole.ADMIN.name())
                 .anyRequest().authenticated()
             )
                 .authenticationProvider(authenticationProvider())

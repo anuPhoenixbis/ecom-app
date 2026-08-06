@@ -1,8 +1,6 @@
 package com.app.ecom_app.dto;
 
 import com.app.ecom_app.enums.Category;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
@@ -31,14 +29,7 @@ public class ProductRequest {
     @DecimalMin(value = "0", inclusive = true,
             message = "Quantity cannot be negative")
     private BigInteger quantity;
-    @NotBlank(message = "Category is required")
-    @Size(min = 2, max = 50,
-            message = "Category must be between 2 and 50 characters")
-    @Pattern(
-            regexp = "^[A-Za-z &-]+$",
-            message = "Category can contain only letters, spaces, '&' and '-'"
-    )
-    @Enumerated(EnumType.STRING)
+    @NotNull(message = "Category is required")
     private Category category;
     @NotBlank(message = "Image URL is required")
     @Pattern(

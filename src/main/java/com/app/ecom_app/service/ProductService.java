@@ -27,7 +27,7 @@ public class ProductService {
     public Product mapProductRequestToProduct(ProductRequest productRequest) {
         Product product = new Product();
         product.setName(productRequest.getName());
-        product.setCategory(String.valueOf(productRequest.getCategory()));
+        product.setCategory(productRequest.getCategory());
         product.setImageUrl(productRequest.getImageUrl());
         product.setPrice(productRequest.getPrice());
         product.setQuantity(productRequest.getQuantity());
@@ -38,7 +38,7 @@ public class ProductService {
         ProductResponse productResponse = new ProductResponse();
         productResponse.setId(product.getId());
         productResponse.setName(product.getName());
-        productResponse.setCategory(product.getCategory());
+        productResponse.setCategory(String.valueOf(product.getCategory()));
         productResponse.setImageUrl(product.getImageUrl());
         productResponse.setPrice(product.getPrice());
         productResponse.setQuantity(product.getQuantity());
@@ -55,7 +55,7 @@ public class ProductService {
         if(!productRepo.findById(id).isPresent()) return null;
         Product savedProduct = productRepo.findById(id).get();
         savedProduct.setName(product.getName());
-        savedProduct.setCategory(String.valueOf(product.getCategory()));
+        savedProduct.setCategory(product.getCategory());
         savedProduct.setImageUrl(product.getImageUrl());
         savedProduct.setPrice(product.getPrice());
         savedProduct.setQuantity(product.getQuantity());
@@ -72,7 +72,7 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
-    public void deleteProduct(String id) {
+    public void deActivateProduct(String id) {
 //        productRepo.deleteById(id);
 //        we won't remove the product from the db rather we shall it in-active
         Product savedProduct = productRepo.findById(id).get();
@@ -88,5 +88,15 @@ public class ProductService {
         return productRepo.searchProducts(keyword).stream()
                 .map(this::mapProductToResponse)
                 .collect(Collectors.toList());
+    }
+
+    public void deleteProduct(String id) {
+        productRepo.deleteById(id);
+    }
+
+    public void activateProduct(String id) {
+        Product savedProduct = productRepo.findById(id).get();
+        savedProduct.setActive(true);
+        productRepo.save(savedProduct);
     }
 }

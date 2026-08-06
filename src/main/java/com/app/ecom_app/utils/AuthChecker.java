@@ -1,5 +1,6 @@
 package com.app.ecom_app.utils;
 
+import com.app.ecom_app.enums.UserRole;
 import com.app.ecom_app.model.User;
 import com.app.ecom_app.repository.UserRepo;
 import lombok.RequiredArgsConstructor;
@@ -16,15 +17,17 @@ public class AuthChecker {
     public Optional<User> checkAuth(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
+        if(auth == null || !auth.isAuthenticated()) return Optional.empty();
+
         String email = auth.getName();
 
         if(email==null){
-            return null;
+            return Optional.empty();
         }
         Optional<User> userOpt = userRepo.findByEmail(email);
 
         if(!userOpt.isPresent()){
-            return null;
+            return Optional.empty();
         }
 
         return userOpt;

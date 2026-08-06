@@ -1,5 +1,6 @@
 package com.app.ecom_app.model;
 
+import com.app.ecom_app.enums.Category;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,13 +22,26 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false, length = 100)
     private String name;
+
+    @Column(length = 100, nullable = false)
     private String description;
+
+    @Column(precision = 100, scale = 2, nullable = false)
     private BigDecimal price;
+
+    @Column(nullable = false)
     private BigInteger quantity;
-    private String category;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Category category;
+
+    @Column(nullable = false)
     private String imageUrl;
+
+    @Column(nullable = false)
     private Boolean active;
 
     @CreationTimestamp
