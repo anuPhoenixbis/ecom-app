@@ -1,10 +1,12 @@
 package com.app.ecom_app.dto;
 
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import lombok.NonNull;
 
 @Data
 public class UserRequest {
@@ -15,6 +17,7 @@ public class UserRequest {
     private String lastName;
 
     @Email
+    @NotBlank
     private String email;
 
     @Pattern(
@@ -29,5 +32,7 @@ public class UserRequest {
             message = "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one digit, and one special character."
     )
     private String password;
+
+    @NonNull
     private AddressDTO address;
 }

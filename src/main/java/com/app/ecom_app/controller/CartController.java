@@ -1,14 +1,19 @@
 package com.app.ecom_app.controller;
 
 import com.app.ecom_app.dto.CartItemRequest;
+import com.app.ecom_app.dto.CartQuantityChangeDTO;
 import com.app.ecom_app.model.CartItem;
+import com.app.ecom_app.model.User;
+import com.app.ecom_app.repository.UserRepo;
 import com.app.ecom_app.service.CartService;
+import com.app.ecom_app.utils.AuthChecker;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigInteger;
 import java.util.List;
 
 @RestController
@@ -18,22 +23,34 @@ public class CartController {
 
     private final CartService cartService;
 
+    private final UserRepo userRepo;
+
     @PostMapping
     public ResponseEntity<String> addToCart(
-            @RequestHeader("X-User-ID") String userId,
             @Valid @RequestBody CartItemRequest request
         ) {
+
+        AuthChecker auth = new AuthChecker(userRepo);
+        User user = auth.checkAuth().orElse(null);
+        if(user == null) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        String userId = user.getId();
+
         if(!cartService.addToCart(userId,request)){
             return ResponseEntity.badRequest().body("Product Out of Stock Or User Id is Invalid Or Product Id is Invalid");
         }
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/items/{productId}")
+    @DeleteMapping("/{productId}")
     public ResponseEntity<Void> deleteFromCart(
-            @RequestHeader("X-User-ID") String userId,
             @PathVariable String productId
     ){
+
+        AuthChecker auth = new AuthChecker(userRepo);
+        User user = auth.checkAuth().orElse(null);
+        if(user == null) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        String userId = user.getId();
+
         if(!cartService.deleteItemFromCart(userId,productId)){
             return ResponseEntity.badRequest().build();
         }
@@ -41,13 +58,49 @@ public class CartController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CartItem>> getCartItems(
-            @RequestHeader("X-User-ID") String userId
-    ){
+    public ResponseEntity<List<CartItem>> getCartItems(){
+
+        AuthChecker auth = new AuthChecker(userRepo);
+        User user = auth.checkAuth().orElse(null);
+        if(user == null) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        String userId = user.getId();
+
         List<CartItem> items = cartService.getCartItems(userId);
         if(items == null){
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok(items);
+    }
+
+    @PutMapping("/{productId}")
+    public ResponseEntity<List<CartItem>> updateCartItems(@PathVariable String productId, @Valid @RequestBody CartQuantityChangeDTO request){
+        AuthChecker auth = new AuthChecker(userRepo);
+        User user = auth.checkAuth().orElse(null);
+        if(user == null) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        String userId = user.getId();
+        List<CartItem> items = cartService.getCartItems(userId);
+
+        if(items == null){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        if(request.getQuantity().compareTo(BigInteger.ZERO) <=0  ) return  new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        if(!cartService.updateProductQuantity(userId, productId,request.getQuantity())){
+            return ResponseEntity.badRequest().build();
+        }
+
+        return ResponseEntity.ok(items);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Void> deleteCartItems(){
+        AuthChecker auth = new AuthChecker(userRepo);
+        User user = auth.checkAuth().orElse(null);
+        if(user == null) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        String userId = user.getId();
+
+        cartService.clearCart(userId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

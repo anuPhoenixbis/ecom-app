@@ -1,0 +1,25 @@
+package com.app.ecom_app.enums;
+
+public enum Category {
+    ELECTRONICS,
+    FASHION,
+    HOME_AND_KITCHEN,
+    BEAUTY,
+    HEALTH,
+    SPORTS_AND_OUTDOORS,
+    BOOKS,
+    TOYS_AND_GAMES,
+    GROCERY,
+    AUTOMOTIVE,
+    PET_SUPPLIES,
+    OFFICE_SUPPLIES,
+    JEWELRY,
+    BABY_PRODUCTS,
+    MUSICAL_INSTRUMENTS,
+    GARDEN,
+    FURNITURE,
+    FOOTWEAR,
+    ACCESSORIES,
+    STATIONERY,
+    OTHER
+}

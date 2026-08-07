@@ -1,54 +1,19 @@
-package com.app.ecom_app.service;
+package com.app.ecom_app.utils;
 
 import com.app.ecom_app.dto.AddressDTO;
 import com.app.ecom_app.dto.UserRequest;
 import com.app.ecom_app.dto.UserResponse;
-import com.app.ecom_app.enums.UserRole;
 import com.app.ecom_app.model.Address;
 import com.app.ecom_app.model.User;
-import com.app.ecom_app.repository.UserRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-@Service
 @RequiredArgsConstructor
-public class UserService {
-
-    private final UserRepo userRepo;
+public class UserMappers {
 
     private final PasswordEncoder passwordEncoder;
 
-    public List<UserResponse> fetchAllUsers() {
-        return userRepo.findAll().stream()
-                .map(this::mapToUserResponse)
-                .collect(Collectors.toList());
-    }
-
-    public void addUser(UserRequest user) {
-        User userEntity = new User();
-        updateUserFromRequest(userEntity,user);
-        userRepo.save(userEntity);
-    }
-
-    public UserResponse fetchUserById(String id) {
-//        fetch the user by id, filter then findFirst orElse null
-        User user = userRepo.findById(id).orElse(null);
-        return user!=null?mapToUserResponse(user):null;
-    }
-
-    public boolean updateUser(String id, UserRequest UpdatedUserRequest){
-        User user = userRepo.findById(id).orElse(null);
-        if(user == null) return false;
-        updateUserFromRequest(user,UpdatedUserRequest);
-        userRepo.save(user);
-        return true;
-    }
-
-    private UserResponse mapToUserResponse(User user) {
+    public UserResponse mapToUserResponse(User user) {
         UserResponse userResponse = new UserResponse();
         userResponse.setId(user.getId());
         userResponse.setFirstName(user.getFirstName());
@@ -69,7 +34,7 @@ public class UserService {
         return userResponse;
     }
 
-    private void updateUserFromRequest(User user, UserRequest userRequest) {
+    public void updateUserFromRequest(User user, UserRequest userRequest){
         user.setFirstName(userRequest.getFirstName());
         user.setLastName(userRequest.getLastName());
         user.setEmail(userRequest.getEmail());
@@ -84,11 +49,5 @@ public class UserService {
         address.setZip(userRequest.getAddress().getZip());
         address.setState(userRequest.getAddress().getState());
         user.setAddress(address);
-    }
-
-    public UserResponse updateUserToAdmin(User user) {
-        user.setRole(UserRole.ADMIN);
-        userRepo.save(user);
-        return mapToUserResponse(user);
     }
 }
