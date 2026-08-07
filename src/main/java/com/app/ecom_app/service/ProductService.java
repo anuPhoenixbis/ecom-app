@@ -1,7 +1,12 @@
 package com.app.ecom_app.service;
 
+import com.app.ecom_app.dto.OrderItemDTO;
+import com.app.ecom_app.dto.OrderResponse;
 import com.app.ecom_app.dto.ProductRequest;
 import com.app.ecom_app.dto.ProductResponse;
+import com.app.ecom_app.model.CartItem;
+import com.app.ecom_app.model.Order;
+import com.app.ecom_app.model.OrderItem;
 import com.app.ecom_app.model.Product;
 import com.app.ecom_app.repository.ProductRepo;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +23,8 @@ import java.util.stream.Collectors;
 public class ProductService {
 
     private final ProductRepo productRepo;
+
+    private final CartService cartService;
 
     public ProductResponse createProduct(ProductRequest productRequest) {
         Product savedProduct = mapProductRequestToProduct(productRequest);//convert from req->product
@@ -99,4 +106,15 @@ public class ProductService {
         savedProduct.setActive(true);
         productRepo.save(savedProduct);
     }
+
+    public void updateStockQuantity(String userId) {
+        List<CartItem> cartItems = cartService.getCartItems(userId);
+        for (CartItem cartItem : cartItems) {
+            productRepo.findById(cartItem.getProduct().getId()).ifPresent(product -> {
+                product.setQuantity(product.getQuantity().subtract(cartItem.getQuantityOnHand()));
+                productRepo.save(product);
+            });
+        }
+    }
+
 }

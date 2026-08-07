@@ -83,10 +83,10 @@ public class CartService {
         userRepo.findById(userId).ifPresent(cartItemRepo::deleteByUser);
     }
 
-    public void updateProductQuantity(String userId, String productId, BigInteger quantity) {
+    public boolean updateProductQuantity(String userId, String productId, BigInteger quantity) {
         CartItemRequest cartItemRequest = new CartItemRequest();
         cartItemRequest.setQuantity(quantity);
         cartItemRequest.setProductId(productId);
-        addToCart(userId, cartItemRequest);
+        return addToCart(userId, cartItemRequest);
     }
 }

@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigInteger;
 import java.util.List;
 
 @RestController
@@ -82,7 +83,12 @@ public class CartController {
         if(items == null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        cartService.updateProductQuantity(userId, productId,request.getQuantity());
+
+        if(request.getQuantity().compareTo(BigInteger.ZERO) <=0  ) return  new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        if(!cartService.updateProductQuantity(userId, productId,request.getQuantity())){
+            return ResponseEntity.badRequest().build();
+        }
 
         return ResponseEntity.ok(items);
     }
